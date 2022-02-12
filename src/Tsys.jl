@@ -22,7 +22,15 @@ Temperature of the *cosmic microwave background* (CMB) in Kelvin
 Tcmb = 2.728
 
 """
-Default calibrator flux model frequency for `ν1` in `flux`.
+`Tsys.ν1` is a `Ref{Float64}` that holds the value used as the default
+calibrator flux model frequency, in Hz, for `ν1` in `flux`.  The initial value
+is `1e6` (i.e. 1 MHz), but the user may change this to match the frequency
+convention of the flux models they will be using.  For example, the flux models
+presented in the 2017 paper by Perley and Butler use frequency in GHz, so the
+user could set `Tsys.ν1[] = 1e9` to make it more convenient to work with those
+flux models.  Of course, one can always pass an explicit value for `ν1` when
+calling `model_flux`, which allows for comparing different flux models with
+different frequency conventions.
 """
 ν1 = Ref{Float64}(1e6)
 
@@ -130,9 +138,11 @@ function tsys_onoff(pon, poff, tcal; tsky=Tcmb, clip=true)
 end
 
 """
+    tsys_onoff(pon, poff, scal, diameter; kwargs...)
+
 Returns Tsys by computing Tcal from `scal` and passing it to `tsys_onoff`.
-Keyword arguments are the same as for `apparent_temperature` and the three
-positional parameter method of `tsys_onoff`.
+Keyword arguments `kwargs` are the same as for `apparent_temperature` and the
+three positional argument method of `tsys_onoff`.
 """
 function tsys_onoff(pon, poff, scal, diameter;
               η=1.0, τ=0.0, airmass=1.0, tsky=Tcmb, clip=true)
